@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualisasi Beban Pikiran</title>
+    <style>
+        :root {
+            --primary-blue: #1e88e5;
+            --light-blue: #e3f2fd;
+            --dark-blue: #0d47a1;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--light-blue);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden; /* Mencegah scrollbar muncul saat kotak turun */
+        }
+
+        .header {
+            margin-top: 20px;
+            text-align: center;
+            z-index: 10;
+        }
+
+        h1 { color: var(--dark-blue); }
+        p { color: #546e7a; }
+
+        /* Area Tampilan Kotak */
+        #stage {
+            position: relative;
+            width: 100%;
+            height: 60vh;
+            border-bottom: 5px solid var(--dark-blue);
+            margin-bottom: 20px;
+        }
+
+        /* Kotak "Beban" */
+        #box {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 120px;
+            background-color: var(--primary-blue);
+            border: 4px solid var(--dark-blue);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            transition: top 0.3s ease-out, background-color 0.5s;
+            top: 10px; /* Posisi awal */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .input-container {
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--primary-blue);
+            border-radius: 10px;
+            font-size: 1rem;
+            resize: none;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: var(--dark-blue);
+            box-shadow: 0 0 8px rgba(30, 136, 229, 0.3);
+        }
+
+        .indicator {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #1565c0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>📦 Simulasi Beban Pikiran</h1>
+        <p>Tumpahkan apa yang ada di pikiranmu di bawah ini.</p>
+    </div>
+
+    <div id="stage">
+        <div id="box">
+            <span id="boxLabel">RINGAN</span>
+        </div>
+    </div>
+
+    <div class="input-container">
+        <textarea id="userInput" rows="4" placeholder="Ketik beban pikiranmu di sini..."></textarea>
+        <div class="indicator">Total Karakter: <span id="charCount">0</span></div>
+    </div>
+
+    <script>
+        const textarea = document.getElementById('userInput');
+        const box = document.getElementById('box');
+        const charCount = document.getElementById('charCount');
+        const boxLabel = document.getElementById('boxLabel');
+        const stage = document.getElementById('stage');
+
+        textarea.addEventListener('input', () => {
+            const length = textarea.value.length;
+            charCount.innerText = length;
+
+            // Logika Pergerakan:
+            // Setiap 1 karakter akan menurunkan kotak sebanyak 2 pixel
+            const baseTop = 10;
+            const maxDrop = stage.offsetHeight - box.offsetHeight - 20;
+            const newTop = Math.min(baseTop + (length * 2), maxDrop);
+
+            // Update posisi kotak
+            box.style.top = newTop + "px";
+
+            // Efek visual tambahan berdasarkan berat
+            if (length === 0) {
+                box.style.backgroundColor = "#1e88e5"; // Biru normal
+                boxLabel.innerText = "RINGAN";
+            } else if (length > 0 && length < 50) {
+                box.style.backgroundColor = "#1976d2"; 
+                boxLabel.innerText = "MULAI BERAT";
+            } else if (length >= 50 && length < 100) {
+                box.style.backgroundColor = "#0d47a1"; 
+                boxLabel.innerText = "BERAT!";
+            } else {
+                box.style.backgroundColor = "#263238"; // Sangat gelap
+                boxLabel.innerText = "KEBERATAN!";
+            }
+        });
+    </script>
+
+</body>
+</html>
